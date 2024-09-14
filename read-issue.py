@@ -111,6 +111,7 @@ def fetch_project_items(client, project_id, token):
                 ... on Issue {{
                   title
                   url
+                  body
                   assignees(first: 10) {{
                     nodes {{
                       login
