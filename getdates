@@ -1,0 +1,34 @@
+#!/bin/bash
+
+# Input date (can be customized)
+input_date=$1
+
+# Get the day of the week for the input date (Monday=1, ..., Sunday=7)
+day_of_week=$(gdate -d "$input_date" +%u)
+
+# Calculate the number of days to subtract to get to the Monday of the week
+days_to_subtract=$((day_of_week - 1))
+
+# Calculate the Monday and Sunday of the week, next week Sunday
+monday=$(gdate -d "$input_date -${days_to_subtract} days" +%Y-%m-%d)
+sunday=$(gdate -d "$monday +6 days" +%Y-%m-%d)
+sundai=$(gdate -d "$input_date last-week sunday" +%Y-%m-%d)
+
+# Get the year numbers for Monday and Sunday
+monday_year=$(gdate -d "$monday" +%Y)
+sunday_year=$(gdate -d "$sunday" +%Y)
+
+echo "mon(${monday}).y=$monday_year sun(${sunday}).y=$sunday_year nsun(${sundai})"
+
+# Check if the year numbers differ
+if [ "$monday_year" != "$sunday_year" ]; then
+  # The week crosses into a new year, use Sunday’s year
+  last_sunday_year=$(gdate -d "$sundai" +%Y)
+  last_sunday_week=$(gdate -d "$sundai" +%V)
+  echo "Year: $last_sunday_year, Week: $(($last_sunday_week + 1))"
+else
+  # Normal case, use the Monday's year and week number
+  monday_year=$(gdate -d "$monday" +%G)
+  week_number=$(gdate -d "$monday" +%V)
+  echo "Year: $monday_year, Week: $week_number"
+fi
