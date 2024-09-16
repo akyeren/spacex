@@ -150,7 +150,14 @@ def extract_issue_id_from_url(url):
 def print_issue_data(response):
     """Extracts and prints the issue titles and field values from the response."""
     items = response['data']['node']['items']['nodes']
-    for item in items:
+
+    epic_items = [
+        item for item in items 
+        if any(field.get('field', {}).get('name') == "Issue Type" and field.get('name') == "Epic"
+               for field in item['fieldValues']['nodes'])
+    ]
+
+    for item in epic_items:
         content = item['content']
         if content:
             url = content.get('url', 'N/A')
